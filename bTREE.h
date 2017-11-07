@@ -5,8 +5,16 @@ using namespace std;
 class bTREE
 {
     struct treeNode{
-        string data;
+		treeNode(int itime = 0, string idata = "Data", bool ileaf = false,
+			treeNode *ileft = NULL, treeNode *iright = NULL)
+			: time(itime), data(idata), leaf(ileaf), left(ileft), right(iright) {}
+
         int time;
+		string data;
+		bool leaf;
+
+		treeNode *left;
+		treeNode *right;
     };
     
 private:
