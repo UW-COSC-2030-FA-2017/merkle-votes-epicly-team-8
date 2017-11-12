@@ -1,5 +1,5 @@
 // bTREE.cpp
-// Robert Randolph & Mckade U.
+// Robert Randolph & Mckade Umbenhower
 // COSC 2030, Section 01
 // Merkle_Votes_HW
 // December 01, 2017

@@ -1,5 +1,5 @@
 // bTREE.h
-// Robert Randolph & Mckade U.
+// Robert Randolph & Mckade Umbenhower
 // COSC 2030, Section 01
 // Merkle_Votes_HW
 // December 01, 2017
@@ -29,17 +29,18 @@ class bTREE
 
 		friend std::ostream& operator <<(std::ostream& out, const treeNode * subtree)
 		{
-			if (subtree != NULL) {
+
+			/*if (subtree != NULL) {
 				out << subtree->left;
 				out << "Time: " << subtree->time
 					<< " :: Vote: " << subtree->data << '\n';
 				out << subtree->right;
-			}
+			}*/
 
 			return out;
 		}
     };
-    
+
 private:
 	treeNode *tree;
 
@@ -54,30 +55,30 @@ private:
 /*	Helper function for destructor.
 	Destroys all nodes in the tree. */
 	static void destroy(treeNode *);
-    
+
 public:
     bTREE();
     ~bTREE();
-    
+
     int dataInserted();
 
 	// Returns the number of nodes in the tree.
     int numberOfNodes();
-    
+
     int insert(string, int);
-    
+
 /*	Find whether a node exists in the tree.
 	Returns the number of operations to find the node. */
     int find(string);
-    
+
     string locate(string);
-    
-    
+
+
     friend bool operator==(const bTREE& lhs, const bTREE& rhs);
     friend bool operator!=(const bTREE& lhs, const bTREE& rhs);
 
     friend std::ostream& operator<<(std::ostream& out, const bTREE&);
-    
+
 };
 
 #endif // !BTREE_H
