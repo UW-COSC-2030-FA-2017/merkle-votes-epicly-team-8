@@ -25,43 +25,6 @@ class bTREE
 
 		treeNode *left;
 		treeNode *right;
-
-		bool operator==(const treeNode &rhs)
-		{
-			if (left == NULL && right == NULL)
-			{
-				return ((time == rhs.time) && (data == rhs.data) && (leaf == rhs.leaf) &&
-					(rhs.left == NULL) && (rhs.right == NULL));
-			}
-			else if (left == NULL)
-			{
-				return ((time == rhs.time) && (data == rhs.data) && (leaf == rhs.leaf) &&
-					(rhs.left == NULL) && (*right == *rhs.right));
-			}
-			else if (right == NULL)
-			{
-				return ((time == rhs.time) && (data == rhs.data) && (leaf == rhs.leaf) &&
-					(*left == *rhs.left) && (rhs.right == NULL));
-			}
-			else
-			{
-				return ((time == rhs.time) && (data == rhs.data) && (leaf == rhs.leaf) &&
-					(*left == *rhs.left) && (*right == *rhs.right));
-			}			
-		}
-
-		friend std::ostream& operator <<(std::ostream& out, const treeNode * subtree)
-		{
-
-			if (subtree != NULL) {
-				out << subtree->left;
-				out << "Time: " << subtree->time
-					<< " :: Vote: " << subtree->data << '\n';
-				out << subtree->right;
-			}
-
-			return out;
-		}
     };
 
 private:
@@ -73,7 +36,7 @@ private:
 
 /*	Helper function to find number of nodes.
 	Returns the number of nodes in the tree. */
-	static int numberOfNodes(const treeNode *);
+	int numberOfNodes(const treeNode *);
 
 	/*	Helper function to insert data nodes.
 	Returns the number of operations performed */
@@ -81,15 +44,25 @@ private:
 
 /*	Helper function to find wether a node exists in the tree.
 	Returns the number of operations to find the node. */
-	static int find(const string, const treeNode *, bool &, bool);
+	int find(const string, const treeNode *, bool &, bool);
 
 	/*Helper function that returns the sequence of (L)eft and (R)ight 
 	moves to get to that node starting from root*/
 	string locate(string, const treeNode*, string &moves); 
 
+/*	Helper functions for operators == and <<.
+	Returns a vector with all the data in the tree. */
+	vector<string> get_data() const;
+	void get_data(vector<string> &, const treeNode *) const;
+
+/*	Helper functions for operator <<.
+	Returns a vector with all the times in the tree. */
+	vector<int> get_time() const;
+	void get_time(vector<int> &, const treeNode *) const;
+
 /*	Helper function for destructor.
 	Destroys all nodes in the tree. */
-	static void destroy(treeNode *);
+	void destroy(treeNode *);
 
 public:
     bTREE();

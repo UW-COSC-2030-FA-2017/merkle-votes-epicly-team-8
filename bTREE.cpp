@@ -59,20 +59,39 @@ string bTREE::locate(string idata)
 	return locate(idata, tree, moves);
 }
 
+// Returns true if the data in two trees are the same and false otherwise.
 bool operator ==(const bTREE& lhs, const bTREE& rhs)
 {
-	return lhs.tree == rhs.tree;
+	bool result(true);
+	vector<string> left_data = lhs.get_data();
+	vector<string> right_data = rhs.get_data();
+
+	if (left_data.size() != right_data.size()) result = false;
+	else {
+		for (int i(0); i < left_data.size(); i++) {
+			if (left_data[i] != right_data[i]) {
+				result = false;
+				i = left_data.size();
+			}
+		}
+	}
+
+	return result;
 }
 
 bool operator !=(const bTREE& lhs, const bTREE& rhs)
 {
-	return !(lhs.tree == rhs.tree);
+	return !(lhs == rhs);
 }
 
 std::ostream& operator <<(std::ostream& out, const bTREE& itree)
 {
-	if (itree.tree != NULL) {
-		out << itree.tree;
+	vector<int> tree_time = itree.get_time();
+	vector<string> tree_data = itree.get_data();
+
+	for (int i(0); i < tree_time.size(); i++) {
+		out << "Time: " << tree_time[i]
+			<< " :: Vote: " << tree_data[i] << '\n';
 	}
 
 	return out;
@@ -223,6 +242,46 @@ string bTREE::locate(string data, const treeNode* subtree, string &moves)
 		}
 		return moves;
 	}
+}
+
+/*	Helper functions for operator ==.
+	Returns a vector with all the data in the tree. */
+vector<string> bTREE::get_data() const
+{
+	vector<string> tree_data;
+	get_data(tree_data, tree);
+
+	return tree_data;
+}
+void bTREE::get_data(vector<string> & tree_data, const treeNode * subtree) const
+{
+	if (subtree != NULL) {
+		tree_data.push_back(subtree->data);
+		get_data(tree_data, subtree->left);
+		get_data(tree_data, subtree->right);
+	}
+
+	return;
+}
+
+/*	Helper functions for operator <<.
+	Returns a vector with all the times in the tree. */
+vector<int> bTREE::get_time() const
+{
+	vector<int> tree_time;
+	get_time(tree_time, tree);
+
+	return tree_time;
+}
+void bTREE::get_time(vector<int> & tree_time, const treeNode * subtree) const
+{
+	if (subtree != NULL) {
+		tree_time.push_back(subtree->time);
+		get_time(tree_time, subtree->left);
+		get_time(tree_time, subtree->right);
+	}
+
+	return;
 }
 
 /*	Helper function for destructor.
