@@ -4,7 +4,10 @@
 // Merkle_Votes_HW
 // December 01, 2017
 
-#include "bTREE.h"	// bTREE
+#include <algorithm>	// sort
+#include "bTREE.h"		// bTREE
+
+using std::sort;
 
 // ===Public Function Definitions===
 
@@ -53,6 +56,7 @@ int bTREE::find(string idata)
 	return find(idata, tree, found, true);
 }
 
+// Returns the sequence of (L)eft and (R)ight moves to get to given node starting from root.
 string bTREE::locate(string idata)
 {
 	string moves = "";
@@ -68,10 +72,12 @@ bool operator ==(const bTREE& lhs, const bTREE& rhs)
 
 	if (left_data.size() != right_data.size()) result = false;
 	else {
+		sort(left_data.begin(), left_data.end());
+		sort(right_data.begin(), right_data.end());
 		for (int i(0); i < left_data.size(); i++) {
 			if (left_data[i] != right_data[i]) {
 				result = false;
-				i = left_data.size();
+				i = left_data.size() - 1;
 			}
 		}
 	}
@@ -79,11 +85,13 @@ bool operator ==(const bTREE& lhs, const bTREE& rhs)
 	return result;
 }
 
+// Returns true if the data in two trees are NOT the same and false otherwise.
 bool operator !=(const bTREE& lhs, const bTREE& rhs)
 {
 	return !(lhs == rhs);
 }
 
+// Prints out all the times and votes of a tree.
 std::ostream& operator <<(std::ostream& out, const bTREE& itree)
 {
 	vector<int> tree_time = itree.get_time();
@@ -134,8 +142,8 @@ int bTREE::numberOfNodes(const treeNode * subtree)
 
 	if (subtree != NULL) {
 		size++;
-		size += numberOfNodes(subtree->left);
-		size += numberOfNodes(subtree->right);
+		if (subtree->left != NULL) size += numberOfNodes(subtree->left);
+		if (subtree->right != NULL) size += numberOfNodes(subtree->right);
 	}
 
 	return size;
@@ -200,8 +208,8 @@ int bTREE::find(const string idata, const treeNode * subtree, bool & found, bool
 	if (!found && subtree != NULL) {
 		operations++;
 		if (idata != subtree->data) {
-			operations += find(idata, subtree->left, found, false);
-			operations += find(idata, subtree->right, found, false);
+			if(subtree->left != NULL) operations += find(idata, subtree->left, found, false);
+			if(subtree->right != NULL) operations += find(idata, subtree->right, found, false);
 		}
 		else found = true;	// Found that the node exists.
 
@@ -244,7 +252,7 @@ string bTREE::locate(string data, const treeNode* subtree, string &moves)
 	}
 }
 
-/*	Helper functions for operator ==.
+/*	Helper functions for operators == and <<.
 	Returns a vector with all the data in the tree. */
 vector<string> bTREE::get_data() const
 {
@@ -257,8 +265,8 @@ void bTREE::get_data(vector<string> & tree_data, const treeNode * subtree) const
 {
 	if (subtree != NULL) {
 		tree_data.push_back(subtree->data);
-		get_data(tree_data, subtree->left);
-		get_data(tree_data, subtree->right);
+		if (subtree->left != NULL) get_data(tree_data, subtree->left);
+		if (subtree->right != NULL) get_data(tree_data, subtree->right);
 	}
 
 	return;
@@ -277,8 +285,8 @@ void bTREE::get_time(vector<int> & tree_time, const treeNode * subtree) const
 {
 	if (subtree != NULL) {
 		tree_time.push_back(subtree->time);
-		get_time(tree_time, subtree->left);
-		get_time(tree_time, subtree->right);
+		if (subtree->left != NULL) get_time(tree_time, subtree->left);
+		if (subtree->right != NULL) get_time(tree_time, subtree->right);
 	}
 
 	return;
