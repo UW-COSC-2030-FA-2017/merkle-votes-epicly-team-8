@@ -158,7 +158,6 @@ int bTREE::insert(treeNode *subtree, treeNode *node)
 	if (subtree == NULL)
 	{
 		operations++;
-		printf("Added on current\n");
 		subtree = node;
 	}
 	else if (node->time > subtree->time)

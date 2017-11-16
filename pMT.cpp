@@ -7,6 +7,9 @@ pMT::pMT(int hashSelect)
  * @return 
  */
 {
+	selectedHash = hashSelect;
+	bTREE *temp = new bTREE;
+	myMerkle = *temp;
 }
 
 pMT::~pMT()
@@ -15,6 +18,7 @@ pMT::~pMT()
  * @return nada
  */
 {
+	delete &myMerkle;
 }
 
 int pMT::insert(string vote, int time)
@@ -74,6 +78,7 @@ string pMT::locateHash(string mhash)
 
 
 
+// Arash Partow's DJB Hash Function edited to return a hex string
 string pMT::hash_1(string key)
 /**
  * @brief A function that takes in a key and returns a hash of that key using some custom function
@@ -81,7 +86,21 @@ string pMT::hash_1(string key)
  * @return a hash of the key
  */
 {
-	return "something";
+	unsigned int hash = 15485863;
+	unsigned int i = 0;
+	unsigned int length = key.length();
+	const char* str = key.c_str();
+
+	// for every character of the string
+	for (i = 0; i < length; i++, str++)
+	{
+		// add the hash to itself shifted five bits leftward, then add
+		// the ith character of the string
+		// this is the new hash
+		hash = ((hash << 5) + hash) + (*str);
+	}
+
+	return intToHex(hash);
 }
 
 string pMT::hash_2(string key)
@@ -94,14 +113,77 @@ string pMT::hash_2(string key)
 	return "something";
 }
 
+// Arash Partow's RS Hash edited to return a hex string
 string pMT::hash_3(string key)
 /**
- * @brief A function that takes in a key and returns a hash of that key using some custom function
- * @param key, a string
- * @return a hash of the key
- */
+* @brief A function that takes in a key and returns a hash of that key using some custom function
+* @param key, a string
+* @return a hash of the key
+*/
 {
-	return "something";
+	unsigned int b = 378551;
+	unsigned int a = 63689;
+	unsigned int hash = 0;
+	unsigned int i = 0;
+	unsigned int length = key.length();
+	const char* str = key.c_str();
+
+	// for every character of the string
+	for (i = 0; i < length; i++, str++)
+	{
+		// take the hash, multiply it by a number, and add
+		// the ith character of the string
+		// this is the new hash
+		hash = hash * a + (*str);
+		// change the hash-multiplier to itself multiplied by a prime
+		a = a * b;
+	}
+
+	return intToHex(hash);
+}
+
+// Convert the input integer to a hex string
+string pMT::intToHex(int i)
+{
+	char* digits = "0123456789ABCDEF";
+	string s = "";
+	int temp = i;
+
+	do
+	{
+		s.insert(s.begin(), digits[temp % 16]);
+		temp = temp / 16;
+	} while (temp != 0);
+	return s;
+}
+
+// Convert the input hex string to an integer
+int pMT::hexToInt(string s)
+{
+	const char *str = s.c_str();
+	unsigned int result = 0;
+
+	for (int i = 0; i < s.length(); i++)
+	{
+		if (str[i] == '0') result += 0;
+		else if (str[i] == '1') result += 1 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '2') result += 2 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '3') result += 3 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '4') result += 4 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '5') result += 5 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '6') result += 6 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '7') result += 7 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '8') result += 8 * pow(16, s.length() - 1 - i);
+		else if (str[i] == '9') result += 9 * pow(16, s.length() - 1 - i);
+		else if (str[i] == 'A') result += 10 * pow(16, s.length() - 1 - i);
+		else if (str[i] == 'B') result += 11 * pow(16, s.length() - 1 - i);
+		else if (str[i] == 'C') result += 12 * pow(16, s.length() - 1 - i);
+		else if (str[i] == 'D') result += 13 * pow(16, s.length() - 1 - i);
+		else if (str[i] == 'E') result += 14 * pow(16, s.length() - 1 - i);
+		else if (str[i] == 'F') result += 15 * pow(16, s.length() - 1 - i);
+	}
+
+	return result;
 }
 
 //			friend bool pMT::operator ==(const pMT& lhs, const pMT& rhs)

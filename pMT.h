@@ -9,9 +9,14 @@ private:
     int selectedHash;
     bTREE myMerkle;
     
+	// Hash done by McKade
     string hash_1(string);
+	// Hash done by Robert
     string hash_2(string);
-    string hash_3(string);
+	string hash_3(string);
+	// Helper conversion functions
+	string intToHex(int i);
+	int hexToInt(string s);
     
 public:
     pMT(int);
@@ -32,6 +37,5 @@ public:
     
     friend pMT operator^(const pMT& lhs, const pMT& rhs);
     friend std::ostream& operator<<(std::ostream& out, const pMT& p);
-    
 };
 
