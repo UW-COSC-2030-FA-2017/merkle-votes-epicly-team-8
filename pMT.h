@@ -2,6 +2,7 @@
 
 #include "bTREE.h"
 #include <string>
+#include "bTREE.h"
 using namespace std;
 class pMT
 {

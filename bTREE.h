@@ -15,18 +15,22 @@ using std::vector;
 
 class bTREE
 {
-    struct treeNode {
-		treeNode(int itime, string idata, bool ileaf, treeNode *ileft, treeNode *iright)
-			: time(itime), data(idata), leaf(ileaf), left(ileft), right(iright) {}
+public:
+	struct treeNode {
+		treeNode(int itime, string idata, bool ileaf, treeNode *ileft, treeNode *iright, treeNode *iparent, treeNode *inextLeaf, treeNode *iprevLeaf)
+			: time(itime), data(idata), leaf(ileaf), left(ileft), right(iright), parent(iparent), nextLeaf(inextLeaf), prevLeaf(iprevLeaf) {}
 
-        int time;
+		int time;
 		string data;
 		bool leaf;
 
 		treeNode *left;
 		treeNode *right;
-    };
-
+		treeNode *parent;
+		treeNode *nextLeaf;
+		treeNode *prevLeaf;
+	};
+	treeNode *headLeaf;
 private:
 	treeNode *tree;
 
@@ -83,7 +87,6 @@ public:
 
 	// returns the sequence of (L)eft and (R)ight moves to get to that node starting from root
     string locate(string);
-
 
     friend bool operator==(const bTREE& lhs, const bTREE& rhs);
     friend bool operator!=(const bTREE& lhs, const bTREE& rhs);
