@@ -6,6 +6,7 @@
 
 #include <algorithm>	// sort
 #include "bTREE.h"		// bTREE
+#include <queue>
 
 using std::sort;
 
@@ -156,93 +157,10 @@ int bTREE::insert(treeNode *subtree, treeNode *node)
 {
 	int operations = 0;
 
-	// Insert node as root
-	if (subtree == NULL)
+	if (tree == NULL)
 	{
-		operations++;
-		subtree = node;
-		headLeaf = subtree;
-	}
-	else if (node->time > subtree->time)
-	{
-		// Insert on the right node
-		if (subtree->right == NULL)
-		{
-			operations++;
-			subtree->right = node;
-			subtree->leaf = false;
-			subtree->right->parent = subtree;
-			if (subtree->prevLeaf != NULL)
-			{
-				// Make the previous leaf point to the new node
-				// and the new node point to the previous leaf
-				subtree->prevLeaf->nextLeaf = subtree->right;
-				subtree->right->prevLeaf = subtree->prevLeaf;
-			}
-			if (subtree->nextLeaf != NULL)
-			{
-				// Make the next leaf point to the new node
-				// and the new node point to the next leaf
-				subtree->nextLeaf->prevLeaf = subtree->right;
-				subtree->right->nextLeaf = subtree->nextLeaf;
-				// Make the subtree point at the right child as its next node
-				subtree->nextLeaf = subtree->right;
-			}
-
-			// Reset the head if it needs to be
-			if (subtree == headLeaf && subtree->left == NULL)
-			{
-				headLeaf = subtree->right;
-			}
-		}
-		else // Insert on right tree
-		{
-			operations++;
-			insert(subtree->right, node);
-		}
-	}
-	else if (node->time == subtree->time) // Replace current node with new node
-	{
-		operations++;
-		subtree->data = node->data;
-	}
-	else
-	{
-		// Insert on the left node
-		if (subtree->left == NULL)
-		{
-			operations++;
-			subtree->left = node;
-			subtree->leaf = false;
-			subtree->left->parent = subtree;
-			if (subtree->prevLeaf != NULL)
-			{
-				// Make the previous leaf point to the new node
-				// and the new node point to the previous leaf
-				subtree->prevLeaf->nextLeaf = subtree->left;
-				subtree->left->prevLeaf = subtree->prevLeaf;
-				// Make the subtree point at the left child as its previous node
-				subtree->prevLeaf = subtree->left;
-			}
-			if (subtree->nextLeaf != NULL)
-			{
-				// Make the next leaf point to the new node
-				// and the new node point to the next leaf
-				subtree->nextLeaf->prevLeaf = subtree->left;
-				subtree->left->nextLeaf = subtree->nextLeaf;
-			}
-
-			// Reset the head if it needs to be
-			if (subtree == headLeaf)
-			{
-				headLeaf = subtree->left;
-			}
-		}
-		else // Insert on left tree
-		{
-			operations++;
-			insert(subtree->left, node);
-		}
+		tree = node;
+		return 1;
 	}
 
 	return operations;

@@ -4,11 +4,10 @@
 #include <string>
 #include "bTREE.h"
 using namespace std;
-class pMT
+class pMT : public bTREE
 {
 private:
     int selectedHash;
-    bTREE myMerkle;
     
 	// Hash done by McKade
     string hash_1(string);

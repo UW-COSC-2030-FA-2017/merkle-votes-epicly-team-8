@@ -8,8 +8,6 @@ pMT::pMT(int hashSelect)
  */
 {
 	selectedHash = hashSelect;
-	bTREE *temp = new bTREE;
-	myMerkle = *temp;
 }
 
 pMT::~pMT()
@@ -18,7 +16,7 @@ pMT::~pMT()
  * @return nada
  */
 {
-	delete &myMerkle;
+	
 }
 
 int pMT::insert(string vote, int time)
@@ -39,15 +37,23 @@ int pMT::insert(string vote, int time)
 	// The new leaf should now be connected to the doubly-linked leaf list 
 	// through its partner's previous and next pointers.
 
+	// if the tree is empty
+	if (numberOfNodes() == 0)
+	{
+		insert(vote, time);
+
+		return 1;
+	}
+
 	// set the partner node
-	bTREE::treeNode *partner = myMerkle.headLeaf;
+	treeNode *partner = headLeaf;
 	while (time < partner->time && partner->nextLeaf != NULL)
 	{
 		partner = partner->nextLeaf;
 		operations++;
 	}
-	bTREE::treeNode *newNode = new bTREE::treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
-	bTREE::treeNode *hashParent;
+	treeNode *newNode = new treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
+	treeNode *hashParent;
 
 	// Set the hash string for the parent
 	string hash;
@@ -68,7 +74,7 @@ int pMT::insert(string vote, int time)
 	if (partner->time > time)
 	{
 		// partner is right child
-		hashParent = new bTREE::treeNode(0, hash, false, newNode, partner, partner->parent, NULL, NULL);
+		hashParent = new treeNode(0, hash, false, newNode, partner, partner->parent, NULL, NULL);
 		newNode->nextLeaf = partner;
 		if(partner->prevLeaf != NULL) newNode->prevLeaf = partner->prevLeaf;
 		partner->prevLeaf = newNode;
@@ -76,7 +82,7 @@ int pMT::insert(string vote, int time)
 	else
 	{
 		// partner is left child
-		hashParent = new bTREE::treeNode(0, hash, false, partner, newNode, partner->parent, NULL, NULL);
+		hashParent = new treeNode(0, hash, false, partner, newNode, partner->parent, NULL, NULL);
 		newNode->prevLeaf = partner;
 		if (partner->nextLeaf != NULL) newNode->nextLeaf = partner->nextLeaf;
 		partner->nextLeaf = newNode;
@@ -84,8 +90,15 @@ int pMT::insert(string vote, int time)
 	// set the child parents to the parent
 	newNode->parent = hashParent;
 	partner->parent = hashParent;
+	
+	// Reset the headLeaf if needed
+	if (partner == headLeaf)
+	{
+		headLeaf = newNode;
+	}
+
 	// Update the parent heirarchy
-	bTREE::treeNode *temp = hashParent;
+	treeNode *temp = hashParent;
 	while (temp->parent != NULL)
 	{
 		operations++;

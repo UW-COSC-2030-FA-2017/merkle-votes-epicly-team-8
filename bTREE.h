@@ -15,7 +15,7 @@ using std::vector;
 
 class bTREE
 {
-public:
+protected:
 	struct treeNode {
 		treeNode(int itime, string idata, bool ileaf, treeNode *ileft, treeNode *iright, treeNode *iparent, treeNode *inextLeaf, treeNode *iprevLeaf)
 			: time(itime), data(idata), leaf(ileaf), left(ileft), right(iright), parent(iparent), nextLeaf(inextLeaf), prevLeaf(iprevLeaf) {}
@@ -31,9 +31,8 @@ public:
 		treeNode *prevLeaf;
 	};
 	treeNode *headLeaf;
-private:
 	treeNode *tree;
-
+private:
 	/*	Helper function to find number of data nodes.
 	Returns the number of data nodes in the tree. */
 	int dataInserted(const treeNode *);
