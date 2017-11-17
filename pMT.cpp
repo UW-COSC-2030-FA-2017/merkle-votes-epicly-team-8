@@ -88,6 +88,7 @@ int pMT::insert(string vote, int time)
 	bTREE::treeNode *temp = hashParent;
 	while (temp->parent != NULL)
 	{
+		operations++;
 		temp = temp->parent;
 
 		if (selectedHash == 1)
@@ -104,7 +105,7 @@ int pMT::insert(string vote, int time)
 		}
 	}
 
-	return 1;
+	return operations;
 }
 
 int pMT::find(string vote, int time, int hashSelect)
