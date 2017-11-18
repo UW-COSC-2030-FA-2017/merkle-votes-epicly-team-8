@@ -29,7 +29,7 @@ pMT::~pMT()
  * @return nada
  */
 {
-	
+	// The destructor for the bTREE class should take care of everything
 }
 
 int pMT::insert(string vote, int time)
@@ -53,7 +53,10 @@ int pMT::insert(string vote, int time)
 	// if the tree is empty
 	if (numberOfNodes() == 0)
 	{
-		insert(vote, time);
+		treeNode *temp = new treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
+		num_nodes++;
+		tree = temp;
+		headLeaf = tree;
 
 		return 1;
 	}
@@ -66,21 +69,22 @@ int pMT::insert(string vote, int time)
 		operations++;
 	}
 	treeNode *newNode = new treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
+	num_nodes++;
 	treeNode *hashParent;
 
 	// Set the hash string for the parent
 	string hash;
 	if (selectedHash == 1)
 	{
-		hash = hash_1(vote) + hash_1(partner->data);
+		hash = intToHex(hexToInt(hash_1(vote)) + hexToInt(hash_1(partner->data)));
 	}
 	else if (selectedHash == 2)
 	{
-		hash = hash_2(vote) + hash_2(partner->data);
+		hash = intToHex(hexToInt(hash_2(vote)) + hexToInt(hash_2(partner->data)));
 	}
 	else
 	{
-		hash = hash_3(vote) + hash_3(partner->data);
+		hash = intToHex(hexToInt(hash_3(vote)) + hexToInt(hash_3(partner->data)));
 	}
 
 	// set the parent node
@@ -88,27 +92,44 @@ int pMT::insert(string vote, int time)
 	{
 		// partner is right child
 		hashParent = new treeNode(0, hash, false, newNode, partner, partner->parent, NULL, NULL);
+		if (hashParent->parent == NULL)
+		{
+			tree = hashParent;
+		}
+		else
+		{
+			hashParent->parent->right = hashParent;
+		}
 		newNode->nextLeaf = partner;
 		if(partner->prevLeaf != NULL) newNode->prevLeaf = partner->prevLeaf;
 		partner->prevLeaf = newNode;
+
+		// Reset the headLeaf if needed 
+		if (partner == headLeaf)
+		{
+			headLeaf = newNode;
+		}
 	}
 	else
 	{
 		// partner is left child
 		hashParent = new treeNode(0, hash, false, partner, newNode, partner->parent, NULL, NULL);
+		if (hashParent->parent == NULL)
+		{ 
+			tree = hashParent; 
+		}
+		else
+		{
+			hashParent->parent->left = hashParent;
+		}
 		newNode->prevLeaf = partner;
 		if (partner->nextLeaf != NULL) newNode->nextLeaf = partner->nextLeaf;
 		partner->nextLeaf = newNode;
 	}
+	num_nodes++;
 	// set the child parents to the parent
 	newNode->parent = hashParent;
 	partner->parent = hashParent;
-	
-	// Reset the headLeaf if needed
-	if (partner == headLeaf)
-	{
-		headLeaf = newNode;
-	}
 
 	// Update the parent heirarchy
 	treeNode *temp = hashParent;
@@ -119,15 +140,15 @@ int pMT::insert(string vote, int time)
 
 		if (selectedHash == 1)
 		{
-			temp->data = hash_1(temp->left->data) + hash_1(temp->right->data);
+			temp->data = intToHex(hexToInt(hash_1(temp->left->data)) + hexToInt(hash_1(temp->right->data)));
 		}
 		else if (selectedHash == 2)
 		{
-			temp->data = hash_2(temp->left->data) + hash_2(temp->right->data);
+			temp->data = intToHex(hexToInt(hash_2(temp->left->data)) + hexToInt(hash_2(temp->right->data)));
 		}
 		else
 		{
-			temp->data = hash_3(temp->left->data) + hash_3(temp->right->data);
+			temp->data = intToHex(hexToInt(hash_3(temp->left->data)) + hexToInt(hash_3(temp->right->data)));
 		}
 	}
 
@@ -136,14 +157,27 @@ int pMT::insert(string vote, int time)
 
 int pMT::find(string vote, int time, int hashSelect)
 /**
- * @brief given a vote, timestamp, and hash function, does this vote exist in the tree?
+ * @brief given a vote timestamp, and hash function, does this vote exist in the tree?
  * @param vote, a string
  * @param time, an int
  * @param hashSelect, an int corresponding to the hash functions _1, _2, and _3
  * @return 0 if not found, else number of opperations required to find the matching vote
  */
 {
-	return 1;
+	int operations = 0;
+	treeNode *temp = headLeaf;
+
+	while (temp != NULL)
+	{
+		operations++;
+		if (temp->data == vote && temp->time == time)
+		{
+			return operations;
+		}
+		temp = temp->nextLeaf;
+	}
+
+	return 0;
 }
 
 int pMT::findHash(string mhash)
@@ -153,7 +187,7 @@ int pMT::findHash(string mhash)
  * @return 0 if not found, else number of opperations required to find the matching hash
  */
 {
-	return 1;
+	return bTREE::find(mhash);
 }
 
 
@@ -164,7 +198,21 @@ string pMT::locateData(string vote)
  * @return sequence of L's and R's comprising the movement to the leaf node; else return a dot '.'
  */
 {
-	return "something";
+	string hashedVote;
+	if (selectedHash == 1)
+	{
+		hashedVote = hash_1(vote);
+	}
+	else if (selectedHash == 2)
+	{
+		hashedVote = hash_2(vote);
+	}
+	else
+	{
+		hashedVote = hash_3(vote);
+	}
+
+	return locateHash(hashedVote);
 }
 
 string pMT::locateHash(string mhash)
@@ -174,7 +222,7 @@ string pMT::locateHash(string mhash)
  * @return sequence of L's and R's comprising the movement to the hash node, ; else return a dot '.'
  */
 {
-	return "something";
+	return bTREE::locate(mhash);
 }
 
 bool operator==(const pMT& lhs, const pMT& rhs)
@@ -265,7 +313,14 @@ std::ostream& operator<<(std::ostream& out, const pMT& p)
 * @return a tree to the screen
 */
 {
-	out << p.tree;
+	vector<int> tree_time = p.get_time();
+	vector<string> tree_data = p.get_data();
+
+	for (int i(0); i < p.num_nodes; i++) {
+		out << "Time: " << tree_time[i]
+			<< " :: Vote: " << tree_data[i] << '\n';
+	}
+
 	return out;
 }
 
@@ -344,11 +399,11 @@ string pMT::hash_3(string key)
 }
 
 // Convert the input integer to a hex string
-string pMT::intToHex(int i)
+string pMT::intToHex(long unsigned int i)
 {
 	char* digits = "0123456789ABCDEF";
 	string s = "";
-	int temp = i;
+	long unsigned int temp = i;
 
 	do
 	{
