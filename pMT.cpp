@@ -199,16 +199,6 @@ bool operator!=(const pMT& lhs, const pMT& rhs)
 	return !(lhs == rhs);
 }
 
-//			friend pMT pMT::operator ^=(const pMT& lhs, const pMT& rhs)
-			/**
-			 * @brief XOR between two merkle trees
-			 * @param lhs, the left hand side of the equality statment
-			 * @param rhs, the right hand side of the equality statement
-			 * @return true if not equal, false otherwise
-			 */
-//			{
-//			}
-
 pMT operator^(const pMT& lhs, const pMT& rhs)
 /**
 * @brief Where do two trees differ
@@ -265,7 +255,14 @@ std::ostream& operator<<(std::ostream& out, const pMT& p)
 * @return a tree to the screen
 */
 {
-	out << p.tree;
+	vector<int> tree_time = p.get_time();
+	vector<string> tree_data = p.get_data();
+
+	for (int i(0); i < p.num_nodes; i++) {
+		out << "Time: " << tree_time[i]
+			<< " :: Vote: " << tree_data[i] << '\n';
+	}
+
 	return out;
 }
 
