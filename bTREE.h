@@ -36,15 +36,11 @@ protected:
 	treeNode *tree;
 
 
-	uint size, height;
+	uint num_nodes, height;
 private:
 	/*	Helper function to find number of data nodes.
 	Returns the number of data nodes in the tree. */
 	int dataInserted(const treeNode *);
-
-/*	Helper function to find number of nodes.
-	Returns the number of nodes in the tree. */
-	int numberOfNodes(const treeNode *);
 
 	/*	Helper function to insert data nodes.
 	Returns the number of operations performed */
@@ -80,7 +76,7 @@ public:
     int dataInserted();
 
 	// Returns the number of nodes in the tree.
-    int numberOfNodes();
+    int numberOfNodes() const;
 
 	// Inserts a treeNode into the tree
     int insert(string, int);

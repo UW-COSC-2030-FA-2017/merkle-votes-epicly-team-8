@@ -16,7 +16,7 @@ bTREE::bTREE()
 {
 	tree = NULL;
 	headLeaf = NULL;
-	size = height = 0;
+	num_nodes = height = 0;
 }
 
 bTREE::~bTREE()
@@ -31,9 +31,9 @@ int bTREE::dataInserted()
 }
 
 // Returns the number of nodes in the tree.
-int bTREE::numberOfNodes()
+int bTREE::numberOfNodes() const
 {
-	return numberOfNodes(tree);
+	return num_nodes;
 }
 
 // Inserts a node ordered by time
@@ -45,18 +45,18 @@ int bTREE::insert(string data, int time)
 
 	if (tree == NULL) {
 		// If the tree is empty.
-		size++;
+		num_nodes++;
 		operations++;
 		tree = node;
 	}
-	else if (size == 2^(height + 1) - 1) {
+	else if (num_nodes == pow(2, (height + 1)) - 1) {
 		// If the tree is full, then adds the node to the next level.
 		height++;
-		size++;
+		num_nodes++;
 		operations = insert(tree, node, true);
 	}
 	else {
-		size++;
+		num_nodes++;
 		operations = insert(tree, node, false);
 	}
 
@@ -82,13 +82,13 @@ string bTREE::locate(string idata)
 bool operator ==(const bTREE& lhs, const bTREE& rhs)
 {
 	bool result(true);
-	vector<string> left_data = lhs.get_data();
-	vector<string> right_data = rhs.get_data();
-
-	if (left_data.size() != right_data.size()) result = false;
+	if (lhs.numberOfNodes() != rhs.numberOfNodes()) result = false;
 	else {
+		vector<string> left_data = lhs.get_data();
+		vector<string> right_data = rhs.get_data();
 		sort(left_data.begin(), left_data.end());
 		sort(right_data.begin(), right_data.end());
+
 		for (int i(0); i < left_data.size(); i++) {
 			if (left_data[i] != right_data[i]) {
 				result = false;
@@ -112,7 +112,7 @@ std::ostream& operator <<(std::ostream& out, const bTREE& itree)
 	vector<int> tree_time = itree.get_time();
 	vector<string> tree_data = itree.get_data();
 
-	for (int i(0); i < tree_time.size(); i++) {
+	for (int i(0); i < itree.numberOfNodes(); i++) {
 		out << "Time: " << tree_time[i]
 			<< " :: Vote: " << tree_data[i] << '\n';
 	}
@@ -147,21 +147,6 @@ int bTREE::dataInserted(const treeNode *subtree)
 	}
 
 	return count;
-}
-
-/*	Helper function to find number of nodes.
-	Increases size by one as long as the subtree treeNode != NULL */
-int bTREE::numberOfNodes(const treeNode * subtree)
-{
-	int size(0);
-
-	if (subtree != NULL) {
-		size++;
-		if (subtree->left != NULL) size += numberOfNodes(subtree->left);
-		if (subtree->right != NULL) size += numberOfNodes(subtree->right);
-	}
-
-	return size;
 }
 
 /*	Helper function to insert data nodes.
