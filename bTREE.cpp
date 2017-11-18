@@ -6,7 +6,6 @@
 
 #include <algorithm>	// sort
 #include "bTREE.h"		// bTREE
-#include <queue>
 
 using std::sort;
 
@@ -82,7 +81,7 @@ string bTREE::locate(string idata)
 bool operator ==(const bTREE& lhs, const bTREE& rhs)
 {
 	bool result(true);
-	if (lhs.numberOfNodes() != rhs.numberOfNodes()) result = false;
+	if (lhs.num_nodes != rhs.num_nodes) result = false;
 	else {
 		vector<string> left_data = lhs.get_data();
 		vector<string> right_data = rhs.get_data();
@@ -112,7 +111,7 @@ std::ostream& operator <<(std::ostream& out, const bTREE& itree)
 	vector<int> tree_time = itree.get_time();
 	vector<string> tree_data = itree.get_data();
 
-	for (int i(0); i < itree.numberOfNodes(); i++) {
+	for (int i(0); i < itree.num_nodes; i++) {
 		out << "Time: " << tree_time[i]
 			<< " :: Vote: " << tree_data[i] << '\n';
 	}

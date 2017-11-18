@@ -35,8 +35,18 @@ protected:
 	treeNode *headLeaf;
 	treeNode *tree;
 
-
 	uint num_nodes, height;
+
+	/*	Helper functions for operators == and <<.
+	Returns a vector with all the data in the tree. */
+	vector<string> get_data() const;
+	void get_data(vector<string> &, const treeNode *) const;
+
+	/*	Helper functions for operator <<.
+	Returns a vector with all the times in the tree. */
+	vector<int> get_time() const;
+	void get_time(vector<int> &, const treeNode *) const;
+
 private:
 	/*	Helper function to find number of data nodes.
 	Returns the number of data nodes in the tree. */
@@ -53,16 +63,6 @@ private:
 	/*Helper function that returns the sequence of (L)eft and (R)ight 
 	moves to get to that node starting from root*/
 	string locate(string, const treeNode*, string &moves); 
-
-/*	Helper functions for operators == and <<.
-	Returns a vector with all the data in the tree. */
-	vector<string> get_data() const;
-	void get_data(vector<string> &, const treeNode *) const;
-
-/*	Helper functions for operator <<.
-	Returns a vector with all the times in the tree. */
-	vector<int> get_time() const;
-	void get_time(vector<int> &, const treeNode *) const;
 
 /*	Helper function for destructor.
 	Destroys all nodes in the tree. */

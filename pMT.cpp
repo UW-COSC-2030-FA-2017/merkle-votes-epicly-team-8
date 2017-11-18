@@ -1,4 +1,17 @@
-#include "pMT.h"
+// pMT.cpp
+// Robert Randolph & Mckade Umbenhower
+// COSC 2030, Section 01
+// Merkle_Votes_HW
+// December 01, 2017
+
+#include <algorithm>	// sort
+#include <vector>		// vector
+#include "pMT.h"		// pMT
+
+using std::sort;
+using std::vector;
+
+// ===Public Function Definitions===
 
 pMT::pMT(int hashSelect)
 /**
@@ -164,15 +177,107 @@ string pMT::locateHash(string mhash)
 	return "something";
 }
 
+bool operator==(const pMT& lhs, const pMT& rhs)
+/**
+* @brief Comparison between two merkle trees
+* @param lhs, the left hand side of the equality statment
+* @param rhs, the right hand side of the equality statement
+* @return true if equal, false otherwise
+*/
+{
+	return (lhs.tree->data == rhs.tree->data);
+}
 
+bool operator!=(const pMT& lhs, const pMT& rhs)
+/**
+* @brief Comparison between two merkle trees
+* @param lhs, the left hand side of the equality statment
+* @param rhs, the right hand side of the equality statement
+* @return true if not equal, false otherwise
+*/
+{
+	return !(lhs == rhs);
+}
+
+//			friend pMT pMT::operator ^=(const pMT& lhs, const pMT& rhs)
+			/**
+			 * @brief XOR between two merkle trees
+			 * @param lhs, the left hand side of the equality statment
+			 * @param rhs, the right hand side of the equality statement
+			 * @return true if not equal, false otherwise
+			 */
+//			{
+//			}
+
+pMT operator^(const pMT& lhs, const pMT& rhs)
+/**
+* @brief Where do two trees differ
+* @param lhs
+* @param rhs
+* @return a tree comprised of the right hand side tree nodes that are different from the left
+*/
+{
+	pMT * dif = new pMT((lhs.selectedHash + rhs.selectedHash) / 2);
+
+	if (lhs != rhs) {
+		int i(0), j(0);
+
+		vector<string> lhs_data = lhs.get_data();
+		vector<string> rhs_data = rhs.get_data();
+		sort(lhs_data.begin(), lhs_data.end());
+		sort(rhs_data.begin(), rhs_data.end());
+
+		// Adding nodes that differ between the two merkle trees.
+		while (i < lhs_data.size() && j < rhs_data.size()) {
+			if (lhs_data[i] < rhs_data[j]) {
+				dif->insert(lhs_data[i], (i + j));
+				i++;
+			}
+			else if (lhs_data[i] > rhs_data[j]) {
+				dif->insert(lhs_data[j], (i + j));
+				j++;
+			}
+			else {
+				i++;
+				j++;
+			}
+		}
+
+		// Adding nodes that are left over from the two merkle tress. (Happens when the sizes are differant)
+		while (i < lhs_data.size()) {
+			dif->insert(lhs_data[i], (i + j));
+			i++;
+		}
+		while (j < lhs_data.size()) {
+			dif->insert(lhs_data[j], (i + j));
+			j++;
+		}
+	}
+
+	return *dif;
+}
+
+std::ostream& operator<<(std::ostream& out, const pMT& p)
+/**
+* @brief Print out a tree
+* @param out
+* @param p
+* @return a tree to the screen
+*/
+{
+	out << p.tree;
+	return out;
+}
+
+// ===Private Function Definitions===
 
 // Arash Partow's DJB Hash Function edited to return a hex string
 string pMT::hash_1(string key)
 /**
- * @brief A function that takes in a key and returns a hash of that key using some custom function
- * @param key, a string
- * @return a hash of the key
- */
+* @brief A function that takes in a key and returns a hash of that key using some custom function
+* @param key, a string
+* @return a hash of the key
+*/
 {
 	unsigned int hash = 15485863;
 	unsigned int i = 0;
@@ -191,18 +296,8 @@ string pMT::hash_1(string key)
 	return intToHex(hash);
 }
 
-string pMT::hash_2(string key)
-/**
- * @brief A function that takes in a key and returns a hash of that key using some custom function
- * @param key, a string
- * @return a hash of the key
- */
-{
-	return "something";
-}
-
 // Arash Partow's RS Hash edited to return a hex string
-string pMT::hash_3(string key)
+string pMT::hash_2(string key)
 /**
 * @brief A function that takes in a key and returns a hash of that key using some custom function
 * @param key, a string
@@ -225,6 +320,24 @@ string pMT::hash_3(string key)
 		hash = hash * a + (*str);
 		// change the hash-multiplier to itself multiplied by a prime
 		a = a * b;
+	}
+
+	return intToHex(hash);
+}
+
+// Arash Partow's DEX Hash edited to return a hex string
+string pMT::hash_3(string key)
+/**
+* @brief A function that takes in a key and returns a hash of that key using some custom function
+* @param key, a string
+* @return a hash of the key
+*/
+{
+	unsigned int hash = static_cast<unsigned int>(key.length());
+
+	for (std::size_t i = 0; i < key.length(); i++)
+	{
+		hash = ((hash << 5) ^ (hash >> 27)) ^ key[i];
 	}
 
 	return intToHex(hash);
@@ -273,57 +386,3 @@ int pMT::hexToInt(string s)
 
 	return result;
 }
-
-//			friend bool pMT::operator ==(const pMT& lhs, const pMT& rhs)
-			/**
-			 * @brief Comparison between two merkle trees
-			 * @param lhs, the left hand side of the equality statment
-			 * @param rhs, the right hand side of the equality statement
-			 * @return true if equal, false otherwise
-			 */
-//			{
-//			}
-
-//			friend bool pMT::operator !=(const pMT& lhs, const pMT& rhs)
-			/**
-			 * @brief Comparison between two merkle trees
-			 * @param lhs, the left hand side of the equality statment
-			 * @param rhs, the right hand side of the equality statement
-			 * @return true if not equal, false otherwise
-			 */
-//			{
-    
-//			}
-
-//			friend pMT pMT::operator ^=(const pMT& lhs, const pMT& rhs)
-			/**
-			 * @brief XOR between two merkle trees
-			 * @param lhs, the left hand side of the equality statment
-			 * @param rhs, the right hand side of the equality statement
-			 * @return true if not equal, false otherwise
-			 */
-//			{
-    
-//			}
-
-
-//			friend std::ostream& pMT::operator <<(std::ostream& out, const pMT& p)
-			/**
-			 * @brief Print out a tree
-			 * @param out
-			 * @param p
-			 * @return a tree to the screen
-			 */
-//			{
-//			}
-
-
-//			friend pMT pMT::operator ^(const pMT& lhs, const pMT& rhs)
-			/**
-			 * @brief Where do two trees differ
-			 * @param lhs
-			 * @param rhs
-			 * @return a tree comprised of the right hand side tree nodes that are different from the left
-			 */
-//			{
-//			}

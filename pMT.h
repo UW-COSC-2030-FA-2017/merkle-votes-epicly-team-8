@@ -1,27 +1,35 @@
-#pragma once
+// pMT.h
+// Robert Randolph & Mckade Umbenhower
+// COSC 2030, Section 01
+// Merkle_Votes_HW
+// December 01, 2017
 
-#include "bTREE.h"
-#include <string>
-#include "bTREE.h"
-using namespace std;
+#ifndef PMT_H
+#define PMT_H
+
+#include <string>	// string
+#include "bTREE.h"	// bTREE
+
+using std::string;
+
 class pMT : public bTREE
 {
 private:
     int selectedHash;
     
-	// Hash done by McKade
+	// Hashs done by McKade
     string hash_1(string);
+	string hash_2(string);
 	// Hash done by Robert
-    string hash_2(string);
 	string hash_3(string);
+
 	// Helper conversion functions
 	string intToHex(int i);
 	int hexToInt(string s);
     
 public:
     pMT(int);
-    ~pMT();
-    
+    ~pMT();    
     
     int insert(string, int);
     
@@ -32,10 +40,11 @@ public:
 	string locateHash(string mhash);
     
     friend bool operator==(const pMT& lhs, const pMT& rhs);
-    
     friend bool operator!=(const pMT& lhs, const pMT& rhs);
-    
+
     friend pMT operator^(const pMT& lhs, const pMT& rhs);
+
     friend std::ostream& operator<<(std::ostream& out, const pMT& p);
 };
 
+#endif // !PMT_H
