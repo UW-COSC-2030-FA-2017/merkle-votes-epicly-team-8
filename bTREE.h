@@ -4,6 +4,8 @@
 // Merkle_Votes_HW
 // December 01, 2017
 
+typedef unsigned int uint;
+
 #ifndef BTREE_H
 #define BTREE_H
 
@@ -32,6 +34,9 @@ protected:
 	};
 	treeNode *headLeaf;
 	treeNode *tree;
+
+
+	uint size, height;
 private:
 	/*	Helper function to find number of data nodes.
 	Returns the number of data nodes in the tree. */
@@ -43,7 +48,7 @@ private:
 
 	/*	Helper function to insert data nodes.
 	Returns the number of operations performed */
-	int insert(treeNode *, treeNode *);
+	int insert(treeNode *, treeNode *, bool);
 
 /*	Helper function to find wether a node exists in the tree.
 	Returns the number of operations to find the node. */

@@ -16,6 +16,7 @@ bTREE::bTREE()
 {
 	tree = NULL;
 	headLeaf = NULL;
+	size = height = 0;
 }
 
 bTREE::~bTREE()
@@ -41,13 +42,25 @@ int bTREE::insert(string data, int time)
 	int operations = 0;
 
 	treeNode *node = new treeNode(time, data, true, NULL, NULL, NULL, NULL, NULL);
-	if (tree == NULL)
-	{
+
+	if (tree == NULL) {
+		// If the tree is empty.
+		size++;
+		operations++;
 		tree = node;
-		return 1;
+	}
+	else if (size == 2^(height + 1) - 1) {
+		// If the tree is full, then adds the node to the next level.
+		height++;
+		size++;
+		operations = insert(tree, node, true);
+	}
+	else {
+		size++;
+		operations = insert(tree, node, false);
 	}
 
-	return insert(tree, node);
+	return operations;
 }
 
 /*	Find whether a node exists in the tree.
@@ -152,15 +165,88 @@ int bTREE::numberOfNodes(const treeNode * subtree)
 }
 
 /*	Helper function to insert data nodes.
-Returns the number of operations performed */
-int bTREE::insert(treeNode *subtree, treeNode *node)
+	@new_level if true then the node is added to the next level of the tree
+	Returns the number of operations performed */
+int bTREE::insert(treeNode *subtree, treeNode *node, bool new_level)
 {
 	int operations = 0;
 
-	if (tree == NULL)
-	{
-		tree = node;
-		return 1;
+	if (subtree != NULL) {
+		operations++;
+
+		// Going to leftmost node of the tree.
+		if (subtree->left != NULL) operations += insert(subtree->left, node, new_level);
+		else if (new_level) {
+			/*	If the tree is full then the node is added to the next level.
+				Adding node to the subtree's left node. (Becoming the leftmost node of the tree).
+				@ node:
+					+ Setting parent to subtree.
+					+ Setting nextleaf to subtree's(parent) nextleaf (The parent's nextleaf is a leaf (or NULL if height < 2))
+				@ subtree's nextleaf: (If the node exists)
+					+ Setting prevleaf to node.
+				@ node's parent:
+					+ Setting leaf status to false */
+			subtree->left = node;
+			node->parent = subtree;
+			node->nextLeaf = subtree->nextLeaf;
+
+			if (subtree->nextLeaf != NULL) subtree->nextLeaf->prevLeaf = node;
+
+			node->parent->leaf = false;
+		}
+		else if (subtree->nextLeaf == NULL) {
+			/*	If the node will fill the current level.
+				Adding node to the subtree's parent's right node. (Becoming the rightmost node of the tree)
+				@ node:
+					+ Setting parent to subtree's parent. (They both branch from the same parent node)
+					+ Setting prevleaf to subtree. (Both nodes are on the same level)
+				@ subtree: (previous node)
+					Setting nextleaf to node. */
+			subtree->parent->right = node;
+			node->parent = subtree->parent;
+			node->prevLeaf = subtree;
+
+			subtree->nextLeaf = node;
+		}
+		// Going to rightmost node of the current level.
+		else if (subtree->nextLeaf != subtree->parent->nextLeaf)  operations += insert(subtree->nextLeaf, node, new_level);
+		// If the node doesn't fill the current level then the node is added to the appropriate parent.
+		else if (subtree->parent->right == NULL) {
+			/*	If the subtree's parent's right node doesn't contain a node.
+				Adding node to the subtree's parent's right node. (Becoming the rightmost node of the current level)
+				@ node:
+					+ Setting parent to subtree's parent. (They both branch from the same parent node)
+					+ Setting nextleaf to parent's next leaf. (The parent's nextleaf node is a leaf (or NULL if second to last node on the current level))
+					+ Setting prevleaf to subtree. (Both nodes are on the same level)
+				@ subtree: (previous node)
+					+ Setting nextleaf to node. */
+			subtree->parent->right = node;
+			node->parent = subtree->parent;
+			node->nextLeaf = node->parent->nextLeaf;
+			node->prevLeaf = subtree;
+
+			subtree->nextLeaf = node;
+		}
+		else {
+			/*	If the subtree's parent's right node does contain a node.
+				Adding node to the subtree's parent's nextleaf's left node. (Becoming the rightmost node of the current level)
+				@ node:
+					+ Setting parent to subtree's parent's nextleaf node. (The subtree and the node don't have the same parent)
+					+ Setting nextleaf to parent's nextleaf node. (The parent's nextleaf is a leaf (or NULL if second to last node on the current level))
+					+ Setting prevleaf to subtree. (Both nodes are on the same level).
+				@ subtree: (previous node)
+					+ Setting nextleaf to node.
+				@ node's parent:
+					+ Setting leaf status to false. (Was previously a leaf) */
+			subtree->parent->nextLeaf->left = node;
+			node->parent = subtree->parent->nextLeaf;
+			node->nextLeaf = node->parent->nextLeaf;
+			node->prevLeaf = subtree;
+
+			subtree->nextLeaf = node;
+
+			node->parent->leaf = false;
+		}
 	}
 
 	return operations;
