@@ -12,7 +12,7 @@
 
 using std::string;
 
-class pMT : public bTREE
+class pMT : private bTREE
 {
 private:
     int selectedHash;
@@ -22,10 +22,10 @@ private:
 	string hash_2(string);
 	// Hash done by Robert
 	string hash_3(string);
-
 	// Helper conversion functions
-	string intToHex(int i);
+	string intToHex(long unsigned int i);
 	int hexToInt(string s);
+	
     
 public:
     pMT(int);
