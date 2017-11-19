@@ -32,6 +32,9 @@ pMT::~pMT()
 	// The destructor for the bTREE class should take care of everything
 }
 
+/*	Insert a node into the merkle tree.
+	Returns the number of operations to insert the node.
+	Returns 0 if the insert failed. */
 int pMT::insert(string vote, int time)
 /**
  * @brief insert a vote and time into a leaf node of tree
@@ -41,6 +44,8 @@ int pMT::insert(string vote, int time)
  */
 {	
 	int operations = 0;
+	treeNode *newNode = new treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
+	if (newNode == nullptr) return 0;
 	// So every leaf is connected through a doubly-linked list
 	// When we insert a new data node (leaf) as part of the Merkle tree,
 	// the new node will be inserted by looking through these leaves until
@@ -53,9 +58,8 @@ int pMT::insert(string vote, int time)
 	// if the tree is empty
 	if (numberOfNodes() == 0)
 	{
-		treeNode *temp = new treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
 		num_nodes++;
-		tree = temp;
+		tree = newNode;
 		headLeaf = tree;
 
 		return 1;
@@ -68,7 +72,6 @@ int pMT::insert(string vote, int time)
 		partner = partner->nextLeaf;
 		operations++;
 	}
-	treeNode *newNode = new treeNode(time, vote, true, NULL, NULL, NULL, NULL, NULL);
 	num_nodes++;
 	treeNode *hashParent;
 

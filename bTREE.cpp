@@ -35,12 +35,15 @@ int bTREE::numberOfNodes() const
 	return num_nodes;
 }
 
-// Inserts a node ordered by time
+/*	Inserts a node ordered by time
+	Returns the number of operations to insert the node.
+	Returns 0 if insert failed. */
 int bTREE::insert(string data, int time)
 {
 	int operations = 0;
 
 	treeNode *node = new treeNode(time, data, true, NULL, NULL, NULL, NULL, NULL);
+	if (node == nullptr) return 0;
 
 	if (tree == NULL) {
 		// If the tree is empty.
