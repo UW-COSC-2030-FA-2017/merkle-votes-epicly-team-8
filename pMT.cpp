@@ -196,26 +196,12 @@ int pMT::findHash(string mhash)
 
 string pMT::locateData(string vote)
 /**
- * @brief Function takes a hash of Vote and returns the sequence of (L)eft and (R)ight moves to get to that node starting from root. 
+ * @brief Function takes a vote and returns the sequence of (L)eft and (R)ight moves to get to that node starting from root. 
  * @param vote, the data to search for 
  * @return sequence of L's and R's comprising the movement to the leaf node; else return a dot '.'
  */
 {
-	string hashedVote;
-	if (selectedHash == 1)
-	{
-		hashedVote = hash_1(vote);
-	}
-	else if (selectedHash == 2)
-	{
-		hashedVote = hash_2(vote);
-	}
-	else
-	{
-		hashedVote = hash_3(vote);
-	}
-
-	return locateHash(hashedVote);
+	return bTREE::locate(vote);
 }
 
 string pMT::locateHash(string mhash)
@@ -226,6 +212,12 @@ string pMT::locateHash(string mhash)
  */
 {
 	return bTREE::locate(mhash);
+}
+
+// Returns the root node data
+string pMT::getRootNode()
+{
+	return tree->data;
 }
 
 bool operator==(const pMT& lhs, const pMT& rhs)

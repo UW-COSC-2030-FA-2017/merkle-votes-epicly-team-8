@@ -38,6 +38,8 @@ public:
     
     string locateData(string);
 	string locateHash(string mhash);
+
+	string getRootNode( void );
     
     friend bool operator==(const pMT& lhs, const pMT& rhs);
     friend bool operator!=(const pMT& lhs, const pMT& rhs);

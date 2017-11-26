@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc, char **argv)
 {
 	// ------------------Tests for bTREE------------------
-	bTREE bt;
+	/*bTREE bt;
 
 	cout << "The tree has " << bt.dataInserted() << " leaf nodes and " << bt.numberOfNodes() << " total nodes." << endl;
 	bt.insert("a", 5);
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 		cout << "Trees the same" << endl;
 	bt3.insert("n", 55);
 	if (bt3 != bt2)
-		cout << "Trees different" << endl;
+		cout << "Trees different" << endl;*/
 
 	// ------------------Tests for pMT------------------
 	ifstream inFile;
@@ -39,19 +39,117 @@ int main(int argc, char **argv)
 	pMT m2(2);
 	pMT m3(3);
 
-	inFile.open("testFile.txt");
+	inFile.open("mv_test.txt");
 	if (inFile.is_open())
 	{
 		string vote, time;
+		// skip the first line
+		getline(inFile, vote);
 		while (!inFile.eof())
 		{
-			getline(inFile, time, ':');
-			getline(inFile, vote);
+			getline(inFile, vote, '\t');
+			getline(inFile, time);
 			m1.insert(vote, atoi(time.c_str()));
 			m2.insert(vote, atoi(time.c_str()));
 			m3.insert(vote, atoi(time.c_str()));	
 		}
+		// Read in a file and output the value of the root node
+		cout << "\n--------------Using First Vote File--------------" << endl;
+		cout << "Root node for first hash: " << m1.getRootNode() << endl;
+		cout << "Root node for second hash: " << m2.getRootNode() << endl;
+		cout << "Root node for third hash: " << m3.getRootNode() << endl;
 
+		// Compare vote files
+		ifstream inFile2;
+		pMT m4(1);
+		pMT m5(2);
+		pMT m6(3);
+
+		inFile2.open("mv_test2.txt");
+		if (inFile2.is_open())
+		{
+			string vote, time;
+			// skip the first line
+			getline(inFile2, vote);
+			while (!inFile2.eof())
+			{
+				getline(inFile2, vote, '\t');
+				getline(inFile2, time);
+				m4.insert(vote, atoi(time.c_str()));
+				m5.insert(vote, atoi(time.c_str()));
+				m6.insert(vote, atoi(time.c_str()));
+			}
+			// Read in a file and output the value of the root node
+			cout << "\n--------------Using Second Vote File--------------" << endl;
+			cout << "Root node for first hash: " << m4.getRootNode() << endl;
+			cout << "Root node for second hash: " << m5.getRootNode() << endl;
+			cout << "Root node for third hash: " << m6.getRootNode() << endl;
+
+			// Compare two identical vote files
+			if (m1 == m4 && m2 == m5 && m3 == m6)
+			{
+				cout << "Validated" << endl;
+			}
+			else
+			{
+				cout << "First hash: \n" << (m1^m4) << endl;
+				cout << "Second hash: \n" << (m1^m5) << endl;
+				cout << "Third hash: \n" << (m1^m6) << endl;
+			}
+		}
+		else
+		{
+			cerr << "File could not be opened!" << endl;
+		}
+
+		inFile2.close();
+
+		// Compare vote files
+		ifstream inFile3;
+		pMT m7(1);
+		pMT m8(2);
+		pMT m9(3);
+
+		inFile3.open("mv_test3.txt");
+		if (inFile3.is_open())
+		{
+			string vote, time;
+			// skip the first line
+			getline(inFile3, vote);
+			while (!inFile3.eof())
+			{
+				getline(inFile3, vote, '\t');
+				getline(inFile3, time);
+				m7.insert(vote, atoi(time.c_str()));
+				m8.insert(vote, atoi(time.c_str()));
+				m9.insert(vote, atoi(time.c_str()));
+			}
+			// Read in a file and output the value of the root node
+			cout << "\n--------------Using Third Vote File--------------" << endl;
+			cout << "Root node for first hash: " << m7.getRootNode() << endl;
+			cout << "Root node for second hash: " << m8.getRootNode() << endl;
+			cout << "Root node for third hash: " << m9.getRootNode() << endl;
+
+			// Compare two differing vote files
+			if (m1 == m7 && m2 == m8 && m3 == m9)
+			{
+				cout << "Validated" << endl;
+			}
+			else
+			{
+				cout << "First hash: \n" << (m1^m7) << endl;
+				cout << "Second hash: \n" << (m1^m8) << endl; 
+				cout << "Third hash: \n" << (m1^m9) << endl;
+			}
+		}
+		else
+		{
+			cerr << "File could not be opened!" << endl;
+		}
+
+		inFile3.close();
+
+		/*** Merkle Tree tests
 		cout << "\n--------------Using  First Hash Function--------------" << endl;
  		cout << m1 << endl;
 		cout << "\n--------------Using Second Hash Function--------------" << endl;
@@ -59,10 +157,10 @@ int main(int argc, char **argv)
 		cout << "\n--------------Using  Third Hash Function--------------" << endl;
 		cout << m3 << endl;
 
-		cout << "Trying to find vote - 4028858:Lance" << endl;
-		int m1f = m1.find("Lance", 4028858, 1);
-		int m2f = m1.find("Lance", 4028858, 1);
-		int m3f = m1.find("Lance", 4028858, 1);
+		cout << "Trying to find vote - 15D2CBA1EC:Candidate2" << endl;
+		int m1f = m1.find("15D2CBA1EC:Candidate2", 4, 1);
+		int m2f = m1.find("15D2CBA1EC:Candidate2", 4, 1);
+		int m3f = m1.find("15D2CBA1EC:Candidate2", 4, 1);
 		if (m1f > 0)
 		{
 			cout << "\tFound vote in " << m1f << " operations" << endl;
@@ -76,10 +174,10 @@ int main(int argc, char **argv)
 			cout << "\tFound vote in " << m3f << " operations" << endl;
 		}
 
-		cout << "Trying to find vote - 4028857:Lance" << endl;
-		m1f = m1.find("Lance", 4028857, 1);
-		m2f = m1.find("Lance", 4028857, 1);
-		m3f = m1.find("Lance", 4028857, 1);
+		cout << "Trying to find vote - 15D2CBA1EE:Candidate2" << endl;
+		m1f = m1.find("15D2CBA1EE:Candidate2", 4, 1);
+		m2f = m1.find("15D2CBA1EE:Candidate2", 4, 1);
+		m3f = m1.find("15D2CBA1EE:Candidate2", 4, 1);
 		if (m1f == 0)
 		{
 			cout << "\tCouldn't find vote" << endl;
@@ -94,34 +192,34 @@ int main(int argc, char **argv)
 		}
 
 		cout << "\nTrying to find hashes that do exist" << endl;
-		cout << "\tNumber of operations to find (0 if not found): " << m1.findHash("C23D70E2") << endl;
-		cout << "\tNumber of operations to find (0 if not found): " << m2.findHash("8370BBE3") << endl;
-		cout << "\tNumber of operations to find (0 if not found): " << m3.findHash("114ED347") << endl;
+		cout << "\tNumber of operations to find (0 if not found): " << m1.findHash("76DA28B6") << endl;
+		cout << "\tNumber of operations to find (0 if not found): " << m2.findHash("94D7A914") << endl;
+		cout << "\tNumber of operations to find (0 if not found): " << m3.findHash("8C341A4C") << endl;
 
 		cout << "\nTrying to find hashes that do NOT exist" << endl;
-		cout << "\tNumber of operations to find (0 if not found): " << m1.findHash("C23D00E2") << endl;
-		cout << "\tNumber of operations to find (0 if not found): " << m2.findHash("83700BE3") << endl;
-		cout << "\tNumber of operations to find (0 if not found): " << m3.findHash("114E0347") << endl;
+		cout << "\tNumber of operations to find (0 if not found): " << m1.findHash("76DA28B2") << endl;
+		cout << "\tNumber of operations to find (0 if not found): " << m2.findHash("94D7A913") << endl;
+		cout << "\tNumber of operations to find (0 if not found): " << m3.findHash("8C341A43") << endl;
 
-		cout << "\nTrying to find locations of 'Lance'" << endl;
-		cout << "\tL R moves to find: " << m1.locateData("Lance") << endl;
-		cout << "\tL R moves to find: " << m2.locateData("Lance") << endl;
-		cout << "\tL R moves to find: " << m3.locateData("Lance") << endl;
+		cout << "\nTrying to find locations of '15D2CBA1EC:Candidate2'" << endl;
+		cout << "\tL R moves to find: " << m1.locateData("15D2CBA1EC:Candidate2") << endl;
+		cout << "\tL R moves to find: " << m2.locateData("15D2CBA1EC:Candidate2") << endl;
+		cout << "\tL R moves to find: " << m3.locateData("15D2CBA1EC:Candidate2") << endl;
 
-		cout << "\nTrying to find locations of 'Tyler'" << endl;
-		cout << "\tL R moves to find: " << m1.locateData("Tyler") << endl;
-		cout << "\tL R moves to find: " << m2.locateData("Tyler") << endl;
-		cout << "\tL R moves to find: " << m3.locateData("Tyler") << endl;
+		cout << "\nTrying to find locations of '15D2CBA1EE:Candidate4'" << endl;
+		cout << "\tL R moves to find: " << m1.locateData("15D2CBA1EE:Candidate4") << endl;
+		cout << "\tL R moves to find: " << m2.locateData("15D2CBA1EE:Candidate4") << endl;
+		cout << "\tL R moves to find: " << m3.locateData("15D2CBA1EE:Candidate4") << endl;
 
 		cout << "\nTrying to find locations of hashes that do exist" << endl;
-		cout << "\tL R moves to find: " << m1.locateHash("C23D70E2") << endl;
-		cout << "\tL R moves to find: " << m2.locateHash("8370BBE3") << endl;
-		cout << "\tL R moves to find: " << m3.locateHash("114ED347") << endl;
+		cout << "\tL R moves to find: " << m1.locateHash("76DA28B6") << endl;
+		cout << "\tL R moves to find: " << m2.locateHash("94D7A914") << endl;
+		cout << "\tL R moves to find: " << m3.locateHash("8C341A4C") << endl;
 
 		cout << "\nTrying to find locations of hashes that do NOT exist" << endl;
-		cout << "\tL R moves to find: " << m1.locateHash("C23000E2") << endl;
-		cout << "\tL R moves to find: " << m2.locateHash("83700BE3") << endl;
-		cout << "\tL R moves to find: " << m3.locateHash("114E0347") << endl;
+		cout << "\tL R moves to find: " << m1.locateHash("76DA28B2") << endl;
+		cout << "\tL R moves to find: " << m2.locateHash("94D7A913") << endl;
+		cout << "\tL R moves to find: " << m3.locateHash("8C341A43") << endl;*/
 	}
 	else
 	{
