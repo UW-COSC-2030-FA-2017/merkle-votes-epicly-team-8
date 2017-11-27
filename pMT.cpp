@@ -6,10 +6,12 @@
 
 #include <algorithm>	// sort
 #include <vector>		// vector
+#include <iostream>	// cout
 #include "pMT.h"		// pMT
 
 using std::sort;
 using std::vector;
+using std::cout;
 
 // ===Public Function Definitions===
 
@@ -217,7 +219,38 @@ string pMT::locateHash(string mhash)
 // Returns the root node data
 string pMT::getRootNode()
 {
-	return tree->data;
+	if (tree != NULL)
+	{
+		return tree->data;
+	}
+	
+	return "";
+}
+
+// Returns the left node data of tree
+string pMT::getLeftNode()
+{
+	if (tree != NULL)
+	{
+		if (tree->left != NULL) {
+			return tree->left->data;
+		}
+	}
+	
+	return "";
+}
+
+// Returns the right node data of tree
+string pMT::getRightNode()
+{
+	if (tree != NULL)
+	{
+		if (tree->right != NULL) {
+			return tree->right->data;
+		}
+	}
+	
+	return "";
 }
 
 bool operator==(const pMT& lhs, const pMT& rhs)
@@ -242,52 +275,52 @@ bool operator!=(const pMT& lhs, const pMT& rhs)
 	return !(lhs == rhs);
 }
 
-pMT operator^(const pMT& lhs, const pMT& rhs)
+void print_help(const treeNode * subtree)
+{
+	if (subtree != NULL) {
+		cout << "Time: " << subtree->time
+			<< " :: Vote: " << subtree->data << '\n';
+		print_help(subtree->left);
+		print_help(subtree->right);
+	}
+	return;
+}
+
+void print_dif(const pMT& other)
 /**
-* @brief Where do two trees differ
-* @param lhs
-* @param rhs
-* @return a tree comprised of the right hand side tree nodes that are different from the left
+* @brief Prints nodes in current tree that differ from passed tree.
+* @param other tree
+* @return nothing
 */
 {
-	pMT * dif = new pMT((lhs.selectedHash + rhs.selectedHash) / 2);
-
-	if (lhs != rhs) {
-		int i(0), j(0);
-
-		vector<string> lhs_data = lhs.get_data();
-		vector<string> rhs_data = rhs.get_data();
-		sort(lhs_data.begin(), lhs_data.end());
-		sort(rhs_data.begin(), rhs_data.end());
-
-		// Adding nodes that differ between the two merkle trees.
-		while (i < lhs_data.size() && j < rhs_data.size()) {
-			if (lhs_data[i] < rhs_data[j]) {
-				dif->insert(lhs_data[i], (i + j));
-				i++;
-			}
-			else if (lhs_data[i] > rhs_data[j]) {
-				dif->insert(lhs_data[j], (i + j));
-				j++;
-			}
-			else {
-				i++;
-				j++;
-			}
+	if (tree == NULL) {
+		cout << "No tree to print\n";
+		return;
+	}
+	else if (other.tree == NULL) {
+		cout << *this;
+		return;
+	}
+	
+	if (other.getRootNode != tree->data) {
+		if (other.getLeftNode != tree->left->data && other.getRightNode != tree->right->data) {
+			cout << *this;
 		}
-
-		// Adding nodes that are left over from the two merkle tress. (Happens when the sizes are differant)
-		while (i < lhs_data.size()) {
-			dif->insert(lhs_data[i], (i + j));
-			i++;
-		}
-		while (j < lhs_data.size()) {
-			dif->insert(lhs_data[j], (i + j));
-			j++;
+		else {
+			cout << tree->data << '\n';
+			if (other.getLeftNode != tree->left->data) {
+				print_help(tree->left);
+			}
+			if (other.getRightNode != tree->right->data) {
+				print_help(tree->right);
+			}
 		}
 	}
-
-	return *dif;
+	else {
+		cout << "Validated\n";
+	}
+	
+	return;
 }
 
 std::ostream& operator<<(std::ostream& out, const pMT& p)
