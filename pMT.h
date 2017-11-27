@@ -12,7 +12,7 @@
 
 using std::string;
 
-class pMT : private bTREE
+class pMT : public bTREE
 {
 private:
     int selectedHash;
@@ -40,11 +40,13 @@ public:
 	string locateHash(string mhash);
 
 	string getRootNode( void );
+	
+	string getLeftNode( void );
+	string getRightNode( void );
+	void print_dif(const pMT &);
     
     friend bool operator==(const pMT& lhs, const pMT& rhs);
     friend bool operator!=(const pMT& lhs, const pMT& rhs);
-
-    friend pMT operator^(const pMT& lhs, const pMT& rhs);
 
     friend std::ostream& operator<<(std::ostream& out, const pMT& p);
 };
