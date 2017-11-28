@@ -41,9 +41,9 @@ public:
 	// Find a hash in the merkle tree.
     int findHash(string);
     
-	// Find something, MCKADE HELP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// Find the L/R moves needed to get to the given string
     string locateData(string);
-	// Find some hash for something, MCKADE HELP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// Find the L/R moves needed to get to the given hash
 	string locateHash(string mhash);
 
 	// Return the data of the root node.
