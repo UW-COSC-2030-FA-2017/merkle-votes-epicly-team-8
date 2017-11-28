@@ -227,32 +227,6 @@ string pMT::getRootNode()
 	return "";
 }
 
-// Returns the left node data of tree
-string pMT::getLeftNode()
-{
-	if (tree != NULL)
-	{
-		if (tree->left != NULL) {
-			return tree->left->data;
-		}
-	}
-	
-	return "";
-}
-
-// Returns the right node data of tree
-string pMT::getRightNode()
-{
-	if (tree != NULL)
-	{
-		if (tree->right != NULL) {
-			return tree->right->data;
-		}
-	}
-	
-	return "";
-}
-
 bool operator==(const pMT& lhs, const pMT& rhs)
 /**
 * @brief Comparison between two merkle trees
@@ -275,50 +249,51 @@ bool operator!=(const pMT& lhs, const pMT& rhs)
 	return !(lhs == rhs);
 }
 
-void print_help(const treeNode * subtree)
-{
-	if (subtree != NULL) {
-		cout << "Time: " << subtree->time
-			<< " :: Vote: " << subtree->data << '\n';
-		print_help(subtree->left);
-		print_help(subtree->right);
-	}
-	return;
-}
-
-void print_dif(const pMT& other)
+void pMT::print_dif(const pMT& other)
 /**
 * @brief Prints nodes in current tree that differ from passed tree.
 * @param other tree
 * @return nothing
 */
 {
-	if (tree == NULL) {
-		cout << "No tree to print\n";
-		return;
-	}
-	else if (other.tree == NULL) {
-		cout << *this;
-		return;
-	}
-	
-	if (other.getRootNode != tree->data) {
-		if (other.getLeftNode != tree->left->data && other.getRightNode != tree->right->data) {
-			cout << *this;
-		}
+	// Check if the current tree is empty.
+	if (tree == NULL) cout << "No tree to print\n";
+
+	// Check if the other tree is empty.
+	else if (other.tree == NULL) cout << *this;
+
+/*	Checks if both tree's root's data are differant.
+	If they are the same prints 'Validated.'
+	Otherwise looks at the tree's children. */
+	else if (tree->data != other.tree->data) {
+
+		// Checks if other tree's children exist. If they don't prints current tree.
+		if (other.tree->left == NULL || other.tree->right == NULL) cout << *this;
 		else {
-			cout << tree->data << '\n';
-			if (other.getLeftNode != tree->left->data) {
-				print_help(tree->left);
-			}
-			if (other.getRightNode != tree->right->data) {
-				print_help(tree->right);
+		/*	Other tree's children exist.
+			Printing root node. */
+			cout << "Time: " << tree->time
+				<< " :: Vote: " << tree->data << '\n';
+
+			// Checking if current tree's children exist.
+			if (tree->left != NULL && tree->right != NULL) {
+
+			/*	Current tree's children exist.
+				Checking if both tree's left child's data are differant.
+				If they are differant prints entire current tree's left child subtree. */
+				if (tree->left->data != other.tree->left->data) {
+					print_dif(tree->left);
+				}
+
+			/*	Checking if both tree's right child's data are differant.
+				If they are differant prints entire current tree's right child subtree. */
+				if (tree->right->data != other.tree->right->data) {
+					print_dif(tree->right);
+				}
 			}
 		}
 	}
-	else {
-		cout << "Validated\n";
-	}
+	else cout << "Validated\n";
 	
 	return;
 }
@@ -458,4 +433,17 @@ int pMT::hexToInt(string s)
 	}
 
 	return result;
+}
+
+/*	Helper Function to print out the nodes of a passed in merkle tree
+that are differant from the current merkle tree. */
+void pMT::print_dif(const treeNode * subtree)
+{
+	if (subtree != NULL) {
+		cout << "Time: " << subtree->time
+			<< " :: Vote: " << subtree->data << '\n';
+		print_dif(subtree->left);
+		print_dif(subtree->right);
+	}
+	return;
 }

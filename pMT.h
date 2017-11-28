@@ -25,24 +25,31 @@ private:
 	// Helper conversion functions
 	string intToHex(long unsigned int i);
 	int hexToInt(string s);
-	
+
+	//	Helper Function to print out the nodes of a passed in subtree
+	void print_dif(const treeNode *);
     
 public:
     pMT(int);
     ~pMT();    
     
+	// Insert a node into the merkle tree.
     int insert(string, int);
     
+	// Find a node in the merkle tree.
     int find(string vote, int time, int hashSelect);
+	// Find a hash in the merkle tree.
     int findHash(string);
     
+	// Find something, MCKADE HELP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     string locateData(string);
+	// Find some hash for something, MCKADE HELP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	string locateHash(string mhash);
 
+	// Return the data of the root node.
 	string getRootNode( void );
-	
-	string getLeftNode( void );
-	string getRightNode( void );
+
+	// Prints out nodes in current tree that differ from passed tree.
 	void print_dif(const pMT &);
     
     friend bool operator==(const pMT& lhs, const pMT& rhs);
