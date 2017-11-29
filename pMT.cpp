@@ -249,6 +249,43 @@ bool operator!=(const pMT& lhs, const pMT& rhs)
 	return !(lhs == rhs);
 }
 
+void pMT::print_difData(const pMT &other)
+/**
+* @brief Prints data nodes in current tree that differ from passed tree.
+* @param other tree
+* @return nothing
+*/
+{
+	treeNode *temp = headLeaf;
+
+	cout << "__________Offending nodes__________\n";
+
+	// For each leaf node
+	while (temp->nextLeaf != NULL)
+	{
+		// Check whether the leaf node exists in the other pMT
+		bool found = false;
+		treeNode *otherTemp = other.headLeaf;
+		while (otherTemp->nextLeaf != NULL)
+		{
+			if (otherTemp->data == temp->data)
+			{
+				found = true;
+				break;
+			}
+
+			otherTemp = otherTemp->nextLeaf;
+		}
+
+		if (!found)
+		{
+			cout << "Time: " << temp->time << " :: Vote: " << temp->data << '\n';
+		}
+
+		temp = temp->nextLeaf;
+	}
+}
+
 void pMT::print_dif(const pMT& other)
 /**
 * @brief Prints nodes in current tree that differ from passed tree.
@@ -266,14 +303,16 @@ void pMT::print_dif(const pMT& other)
 	If they are the same prints 'Validated.'
 	Otherwise looks at the tree's children. */
 	else if (tree->data != other.tree->data) {
-
+		cout << "Offending subtree: ";
 		// Checks if other tree's children exist. If they don't prints current tree.
-		if (other.tree->left == NULL || other.tree->right == NULL) cout << *this;
+		if (other.tree->left == NULL || other.tree->right == NULL)
+		{
+			cout << "Left, Right, and Root\n";
+			cout << *this;
+		}
 		else {
-		/*	Other tree's children exist.
-			Printing root node. */
-			cout << "Time: " << tree->time
-				<< " :: Vote: " << tree->data << '\n';
+		//	Other tree's children exist.
+			
 
 			// Checking if current tree's children exist.
 			if (tree->left != NULL && tree->right != NULL) {
@@ -282,20 +321,76 @@ void pMT::print_dif(const pMT& other)
 				Checking if both tree's left child's data are differant.
 				If they are differant prints entire current tree's left child subtree. */
 				if (tree->left->data != other.tree->left->data) {
+					cout << "Left and Root\n";
+					cout << "Time: " << tree->time
+						<< " :: Vote: " << tree->data << '\n';
 					print_dif(tree->left);
 				}
 
 			/*	Checking if both tree's right child's data are differant.
 				If they are differant prints entire current tree's right child subtree. */
 				if (tree->right->data != other.tree->right->data) {
+					cout << "Right and Root\n";
+					cout << "Time: " << tree->time
+						<< " :: Vote: " << tree->data << '\n';
 					print_dif(tree->right);
 				}
 			}
 		}
+
+		print_difData(other);
 	}
 	else cout << "Validated\n";
 	
 	return;
+}
+
+pMT operator^(const pMT& lhs, const pMT& rhs)
+/**
+* @brief Where do two trees differ
+* @param lhs
+* @param rhs
+* @return a tree comprised of the right hand side tree nodes that are different from the left
+*/
+{
+	pMT * dif = new pMT((lhs.selectedHash + rhs.selectedHash) / 2);
+
+	if (lhs != rhs) {
+		int i(0), j(0);
+
+		vector<string> lhs_data = lhs.get_data();
+		vector<string> rhs_data = rhs.get_data();
+		sort(lhs_data.begin(), lhs_data.end());
+		sort(rhs_data.begin(), rhs_data.end());
+
+		// Adding nodes that differ between the two merkle trees.
+		while (i < lhs_data.size() && j < rhs_data.size()) {
+			if (lhs_data[i] < rhs_data[j]) {
+				dif->insert(lhs_data[i], (i + j));
+				i++;
+			}
+			else if (lhs_data[i] > rhs_data[j]) {
+				dif->insert(lhs_data[j], (i + j));
+				j++;
+			}
+			else {
+				i++;
+				j++;
+			}
+		}
+
+		// Adding nodes that are left over from the two merkle tress. (Happens when the sizes are differant)
+		while (i < lhs_data.size()) {
+			dif->insert(lhs_data[i], (i + j));
+			i++;
+		}
+		while (j < lhs_data.size()) {
+			dif->insert(lhs_data[j], (i + j));
+			j++;
+		}
+	}
+
+	return *dif;
 }
 
 std::ostream& operator<<(std::ostream& out, const pMT& p)

@@ -86,16 +86,12 @@ int main(int argc, char **argv)
 			cout << "Root node for third hash: " << m6.getRootNode() << endl;
 
 			// Compare two identical vote files
-			if (m1 == m4 && m2 == m5 && m3 == m6)
-			{
-				cout << "Validated" << endl;
-			}
-			else
-			{
-				cout << "First hash: \n" << (m1^m4) << endl;
-				cout << "Second hash: \n" << (m1^m5) << endl;
-				cout << "Third hash: \n" << (m1^m6) << endl;
-			}
+			cout << "\n--------------Using  First Hash Function--------------" << endl;
+			m4.print_dif(m1);
+			cout << "\n--------------Using Second Hash Function--------------" << endl;
+			m5.print_dif(m2);
+			cout << "\n--------------Using  Third Hash Function--------------" << endl;
+			m6.print_dif(m3);
 		}
 		else
 		{
@@ -131,16 +127,12 @@ int main(int argc, char **argv)
 			cout << "Root node for third hash: " << m9.getRootNode() << endl;
 
 			// Compare two differing vote files
-			if (m1 == m7 && m2 == m8 && m3 == m9)
-			{
-				cout << "Validated" << endl;
-			}
-			else
-			{
-				cout << "First hash: \n" << (m1^m7) << endl;
-				cout << "Second hash: \n" << (m1^m8) << endl; 
-				cout << "Third hash: \n" << (m1^m9) << endl;
-			}
+			cout << "\n--------------Using  First Hash Function--------------" << endl;
+			m7.print_dif(m1);
+			cout << "\n--------------Using Second Hash Function--------------" << endl;
+			m8.print_dif(m2);
+			cout << "\n--------------Using  Third Hash Function--------------" << endl;
+			m9.print_dif(m3);
 		}
 		else
 		{
@@ -148,6 +140,16 @@ int main(int argc, char **argv)
 		}
 
 		inFile3.close();
+
+		/* Statistics */
+		/*
+		cout << endl << endl << "_______________Statistics on m1_______________" << endl;
+		cout << "Number of nodes: \t" << m1.numberOfNodes() << endl;
+		cout << "Number of leaves: \t" << m1.dataInserted() << endl;
+		cout << "Operations to insert: \t" << m1.insert("1333CB31EC:Candidate2", 44) << endl;
+		cout << "Hashes needed to recompute: " << (m1.numberOfNodes() - m1.dataInserted()) << endl;
+		*/
+
 
 		/*** Merkle Tree tests
 		cout << "\n--------------Using  First Hash Function--------------" << endl;

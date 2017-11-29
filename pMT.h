@@ -51,7 +51,10 @@ public:
 
 	// Prints out nodes in current tree that differ from passed tree.
 	void print_dif(const pMT &);
+	// Prints out data nodes in current tree that differ from passed tree.
+	void print_difData(const pMT &);
     
+	friend pMT operator^(const pMT& lhs, const pMT& rhs);
     friend bool operator==(const pMT& lhs, const pMT& rhs);
     friend bool operator!=(const pMT& lhs, const pMT& rhs);
 
