@@ -1,3 +1,6 @@
+McKade Umbenhower: DJB Hash & RS Hash
+Robert Randolph: DEX Hash
+
 # MerkleVotes
 
 Merkle Is Voting - And it's going to be epic.
