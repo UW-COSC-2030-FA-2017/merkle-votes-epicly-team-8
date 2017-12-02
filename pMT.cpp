@@ -81,15 +81,15 @@ int pMT::insert(string vote, int time)
 	string hash;
 	if (selectedHash == 1)
 	{
-		hash = intToHex(hexToInt(hash_1(vote)) + hexToInt(hash_1(partner->data)));
+		hash = hash_1(intToHex(hexToInt(hash_1(vote)) + hexToInt(hash_1(partner->data))));
 	}
 	else if (selectedHash == 2)
 	{
-		hash = intToHex(hexToInt(hash_2(vote)) + hexToInt(hash_2(partner->data)));
+		hash = hash_2(intToHex(hexToInt(hash_2(vote)) + hexToInt(hash_2(partner->data))));
 	}
 	else
 	{
-		hash = intToHex(hexToInt(hash_3(vote)) + hexToInt(hash_3(partner->data)));
+		hash = hash_3(intToHex(hexToInt(hash_3(vote)) + hexToInt(hash_3(partner->data))));
 	}
 
 	// set the parent node
@@ -103,7 +103,14 @@ int pMT::insert(string vote, int time)
 		}
 		else
 		{
-			hashParent->parent->right = hashParent;
+			if (hashParent->parent->right == partner)
+			{
+				hashParent->parent->right = hashParent;
+			}
+			else
+			{
+				hashParent->parent->left = hashParent;
+			}
 		}
 		newNode->nextLeaf = partner;
 		if (partner->prevLeaf != NULL)
@@ -129,7 +136,14 @@ int pMT::insert(string vote, int time)
 		}
 		else
 		{
-			hashParent->parent->left = hashParent;
+			if (hashParent->parent->right == partner)
+			{
+				hashParent->parent->right = hashParent;
+			}
+			else
+			{
+				hashParent->parent->left = hashParent;
+			}
 		}
 		newNode->prevLeaf = partner;
 		if (partner->nextLeaf != NULL)
@@ -143,6 +157,8 @@ int pMT::insert(string vote, int time)
 	// set the child parents to the parent
 	newNode->parent = hashParent;
 	partner->parent = hashParent;
+
+	//cout << hashParent->data << ", Left: " << hashParent->left->data << ", Right: " << hashParent->right->data << '\n';
 
 	// Update the parent heirarchy
 	treeNode *temp = hashParent;
@@ -280,12 +296,12 @@ void pMT::print_difData(const pMT &other)
 	cout << "__________Offending nodes__________\n";
 
 	// For each leaf node
-	while (temp->nextLeaf != NULL)
+	while (temp != NULL)
 	{
 		// Check whether the leaf node exists in the other pMT
 		bool found = false;
 		treeNode *otherTemp = other.headLeaf;
-		while (otherTemp->nextLeaf != NULL)
+		while (otherTemp != NULL)
 		{
 			if (otherTemp->data == temp->data)
 			{

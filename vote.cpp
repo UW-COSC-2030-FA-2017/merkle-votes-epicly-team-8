@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 		pMT m7(1);
 		pMT m8(2);
 		pMT m9(3);
-
+		
 		inFile3.open("mv_test3.txt");
 		if (inFile3.is_open())
 		{
