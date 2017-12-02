@@ -169,15 +169,15 @@ int pMT::insert(string vote, int time)
 
 		if (selectedHash == 1)
 		{
-			temp->data = intToHex(hexToInt(hash_1(temp->left->data)) + hexToInt(hash_1(temp->right->data)));
+			temp->data = hash_1(intToHex(hexToInt(hash_1(temp->left->data)) + hexToInt(hash_1(temp->right->data))));
 		}
 		else if (selectedHash == 2)
 		{
-			temp->data = intToHex(hexToInt(hash_2(temp->left->data)) + hexToInt(hash_2(temp->right->data)));
+			temp->data = hash_2(intToHex(hexToInt(hash_2(temp->left->data)) + hexToInt(hash_2(temp->right->data))));
 		}
 		else
 		{
-			temp->data = intToHex(hexToInt(hash_3(temp->left->data)) + hexToInt(hash_3(temp->right->data)));
+			temp->data = hash_3(intToHex(hexToInt(hash_3(temp->left->data)) + hexToInt(hash_3(temp->right->data))));
 		}
 	}
 
