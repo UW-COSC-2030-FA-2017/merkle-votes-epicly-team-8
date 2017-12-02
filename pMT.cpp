@@ -69,7 +69,7 @@ int pMT::insert(string vote, int time)
 
 	// set the partner node
 	treeNode *partner = headLeaf;
-	while (time < partner->time && partner->nextLeaf != NULL)
+	while (time > partner->time && partner->nextLeaf != NULL)
 	{
 		partner = partner->nextLeaf;
 		operations++;
@@ -106,7 +106,11 @@ int pMT::insert(string vote, int time)
 			hashParent->parent->right = hashParent;
 		}
 		newNode->nextLeaf = partner;
-		if(partner->prevLeaf != NULL) newNode->prevLeaf = partner->prevLeaf;
+		if (partner->prevLeaf != NULL)
+		{
+			newNode->prevLeaf = partner->prevLeaf;
+			partner->prevLeaf->nextLeaf = newNode;
+		}
 		partner->prevLeaf = newNode;
 
 		// Reset the headLeaf if needed 
@@ -128,7 +132,11 @@ int pMT::insert(string vote, int time)
 			hashParent->parent->left = hashParent;
 		}
 		newNode->prevLeaf = partner;
-		if (partner->nextLeaf != NULL) newNode->nextLeaf = partner->nextLeaf;
+		if (partner->nextLeaf != NULL)
+		{
+			newNode->nextLeaf = partner->nextLeaf;
+			partner->nextLeaf->prevLeaf = newNode;
+		}
 		partner->nextLeaf = newNode;
 	}
 	num_nodes++;
@@ -247,6 +255,17 @@ bool operator!=(const pMT& lhs, const pMT& rhs)
 */
 {
 	return !(lhs == rhs);
+}
+
+
+void pMT::printLeaves()
+{
+	treeNode *temp = headLeaf;
+	while (temp != NULL)
+	{
+		cout << "Time: " << temp->time << " :: Vote: " << temp->data << '\n';
+		temp = temp->nextLeaf;
+	}
 }
 
 void pMT::print_difData(const pMT &other)

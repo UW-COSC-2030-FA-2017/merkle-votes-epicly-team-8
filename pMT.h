@@ -49,6 +49,8 @@ public:
 	// Return the data of the root node.
 	string getRootNode( void );
 
+	// Print the leaf nodes
+	void printLeaves( void );
 	// Prints out nodes in current tree that differ from passed tree.
 	void print_dif(const pMT &);
 	// Prints out data nodes in current tree that differ from passed tree.

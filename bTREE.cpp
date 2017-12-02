@@ -338,10 +338,8 @@ void bTREE::get_time(vector<int> & tree_time, const treeNode * subtree) const
 void bTREE::destroy(treeNode * subtree)
 {
 	if (subtree != NULL) {
-		if(subtree->left != NULL)
-			destroy(subtree->left);
-		if(subtree->right != NULL)
-			destroy(subtree->right);
+		destroy(subtree->left);
+		destroy(subtree->right);
 		delete subtree;
 		subtree = NULL;
 	}
